@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load repo_helper %}
+{% block content %}
+    <div class="row">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Repository</li>
+        </ol>
+    </div>
+    <div class="row">
+
+        {% if contentcount == 0 %}
+            <div class="panel-body">
+                <h2 class="text-center">Nothing File</h2>
+            </div>
+        {% else %}
+            {% for foo in content %}
+                <div class="col-lg-4" style="margin-bottom: 2%">
+                    <div class="card">
+                        <div class="panel-heading" style="background-color: darkgrey; text-align: center">
+                            <div class="panel-title">
+                                <a href="#">{{ foo.repository_name }}</a>
+                            </div>
+                        </div>
+                        <div class="panel-body" style="background-color: lightgrey;">
+                            <table class="table table-striped">
+                                <tbody>
+                                <tr>
+                                    <td>Created : {{ foo.created }}</td>
+                                </tr>
+                            </table>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Owner <span class="pull-right">{{ foo.user }}</span>
+                                </li>
+                                <li class="list-group-item">ID <span class="pull-right">{{ foo.id_repository }}</span>
+                                </li>
+                                <li class="list-group-item">Name <span
+                                        class="pull-right">{{ foo.repository_name }}</span></li>
+                            </ul>
+                            <div class="card-block">
+                                <a href="/repository/view/edit/{{ foo.id_repository }}"
+                                   class="btn btn-primary">Edit</a>
+                                <a href="/repository/view/{{ foo.id_repository }}/" class="btn btn-info">View
+                                    Detail</a>
+                                <a href="/repository/xml/{{ foo.id_repository }}/" class="btn btn-warning">View
+                                    XML</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="col-lg-12">
+                <div class="panel-footer" style="background-color: lightgray">
+                    <ul class="pager">
+                        {% if content.has_previous %}
+                            <li class="previous">
+                                <a href="?page={{ content.previous_page_number }}">previous</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="current">
+                            Page {{ content.number }} of {{ content.paginator.num_pages }}.
+                        </li>
+
+                        {% if content.has_next %}
+                            <li class="next">
+                                <a href="?page={{ content.next_page_number }}">next</a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+{% endblock %}

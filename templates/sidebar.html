@@ -1,0 +1,116 @@
+<!-- Navigation -->
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+
+    </div>
+    <!-- Top Menu Items -->
+    <ul class="nav navbar-right top-nav">
+
+        {% if user.is_authenticated %}
+            <li>
+                <a href="#" data-toggle="modal" data-target="#modalRepository"
+                   style="background-color: #e3e3e3; color: black ">
+                    Add Repository <span class="glyphicon glyphicon-plus"></span>
+                </a>
+            </li>
+            <li>
+                <a class="pull-left" href="/repository/" data-toggle="tooltip" data-placement="bottom"
+                   data-original-title="View Repository" style="background-color: grey">
+                    View All <span class="glyphicon glyphicon-list"></span>
+                </a>
+            </li>
+        {% endif %}
+
+        <li class="dropdown">
+            {% if user.is_authenticated %}
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.email }} <b
+                        class="glyphicon glyphicon-user"></b></a>
+            {% else %}
+                <a href="/login/" class="dropdown-toggle">Login <b
+                        class="glyphicon glyphicon-user"></b></a>
+            {% endif %}
+
+            <ul class="dropdown-menu">
+                <li><a href="#"><i class="fa fa-fw fa-user"></i> Edit Profile</a></li>
+                <li><a href="#"><i class="fa fa-fw fa-cog"></i> Change Password</a></li>
+                <li class="divider"></li>
+                <li><a href="/logout/"><i class="fa fa-fw fa-power-off"></i> Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+    <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav side-nav">
+            {% if user.is_authenticated %}
+                <li style="background-color: #e3e3e3;">
+                    <a href="/" style="color: black"><i
+                            class="glyphicon glyphicon-home"></i> HOME</a>
+                </li>
+                <li style="background-color: #e3e3e3;">
+                    <a href="#" data-toggle="modal" data-target="#modalRepository" style="color: black"><i
+                            class="glyphicon glyphicon-plus"></i> ADD REPOSITORY</a>
+                </li>
+                <li style="background-color: lightgrey;">
+                    <a href="/repository/" style="color: black"><i class="glyphicon glyphicon-list"></i> VIEW ALL</a>
+                </li>
+
+            {% else %}
+                <li style="background-color: #e3e3e3;">
+                    <a href="/" data-toggle="modal" data-target="#modalRepository" style="color: black"><i
+                            class="glyphicon glyphicon-home"></i> HOME</a>
+                </li>
+                <li style="background-color: #e3e3e3;">
+                    <a href="#nothing" data-toggle="modal" style="color: black"><i
+                            class="glyphicon glyphicon-plus"></i> ADD REPOSITORY</a>
+                </li>
+                <li style="background-color: lightgrey;">
+                    <a href="#nothing" style="color: black"><i class="glyphicon glyphicon-plus"></i> ADD REPOSITORY</a>
+                </li>
+
+            {% endif %}
+
+
+        </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+</nav>
+
+<!-- Modal Digital -->
+<div class="modal fade" id="modalRepository" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="/add/" method="POST"> {% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Add Repository</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="id_repository" placeholder="Id Repository"
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="repository_name" placeholder="Repository Name"
+                               required>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary" value="Add Repository">
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if content == "nothing" %}
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/repository/">Repository</a></li>
+                <li class="breadcrumb-item active">Edit</li>
+
+            </ol>
+        </div>
+        <div class="col-lg-12">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger alert-dismissable">
+                        <h3 class="text-center"> {{ message }} </h3>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-lg-12">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/repository/">Repository</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                    <li class="pull-right"><a href="#" class="btn btn-danger" data-toggle="modal"
+                                              data-target="#deleteRepo">Delete Repository</a></li>
+                </ol>
+            </div>
+            <!-- Delete Repository -->
+            <div class="modal fade" id="deleteRepo" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form action="/deleterepository/" method="POST"> {% csrf_token %}
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title">Remove <b>{{ content.repository_name }}</b></h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" value="{{ content.id_repository }}" name="id_repository">
+                                <h3 class="text-center"> Are You Sure to delete?
+                                </h3>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">Owner <span class="pull-right">{{ content.user }}</span>
+                                    </li>
+                                    <li class="list-group-item">ID <span
+                                            class="pull-right">{{ content.id_repository }}</span></li>
+                                    <li class="list-group-item">Name <span
+                                            class="pull-right">{{ content.repository_name }}</span></li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <input type="submit" class="btn btn-danger" value="Delete">
+                            </div>
+                        </form>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <div class="col-lg-12">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h3 class="text-center"> {{ message }} </h3>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 2%">
+                <div class="panel-heading" style="background-color: darkgrey">
+                    <div class="panel-title">
+                        <h4 class="text-center">Info Repository</h4>
+                    </div>
+                </div>
+                <div class="panel-body" style="background-color: lightgrey;">
+                    <form method="POST" action="/repository/view/edit/{{ content.id_repository }}/">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Id Berkas</label>
+                            <input type="text" class="form-control" value="{{ content.id_repository }}"
+                                   id="formGroupExampleInput"
+                                   placeholder="Example input" disabled>
+                            <input type="hidden" value="{{ content.id_repository }}" name="id_repository">
+                            <input type="hidden" name="user_id" value="{{ content.user_id }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Repository Name</label>
+                            <input type="text" class="form-control" value="{{ content.repository_name }}"
+                                   id="formGroupExampleInput" name="repository_name"
+                                   placeholder="Example input">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="text" class="pickerdate form-control" id="date"
+                                   value="{{ content.date|date:"Y-m-d" }}"
+                                   name="date" placeholder="Example input">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Created</label>
+                            <input type="text" class="form-control"
+                                   value="{{ content.created }} "
+                                   id="formGroupExampleInput"
+                                   placeholder="Example input" disabled>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Info</label>
+                        <textarea type="text" class="form-control"
+                                  id="formGroupExampleInput"
+                                  placeholder="Example input" name="info">{{ content.info }}</textarea>
+                        </div>
+                        <div class="form-group row">
+                            <input type="submit" class="button-blue" value="Update Data">
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 2%">
+                <div class="panel-heading" style="background-color: darkgrey">
+                    <div class="panel-title">
+                        <h4 class="text-center"><b>Digitals Evidence
+                            <a href="#" data-toggle="modal" data-target="#modalDigital"
+                               class="button-add pull-right">Add <span
+                                    class="glyphicon glyphicon-plus"></span> </a></b></h4>
+                    </div>
+                </div>
+                <div class="panel-body" style="background-color: beige">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Size</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for foo in digital %}
+                                <tr>
+                                    <td>{{ foo.filename }}</td>
+                                    <td>{{ foo.file.size|filesizeformat }}</td>
+                                    <td>
+                                        <a href="#" data-toggle="modal" data-target="#modalDigitalDelete{{ foo.id }}"
+                                           class="btn btn-danger pull-right"> <span
+                                                class="glyphicon glyphicon-trash"></span> </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 2%">
+                <div class="panel-heading" style="background-color: darkgrey">
+                    <div class="panel-title">
+                        <h4 class="text-center"><b>Electronics Evidence
+                            <a href="#" data-toggle="modal" data-target="#modalElectronic"
+                               class="button-add pull-right">Add <span
+                                    class="glyphicon glyphicon-plus"></span> </a></b></h4>
+                    </div>
+                </div>
+                <div class="panel-body" style="background-color: beige">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Size</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for foo in electronic %}
+                                <tr>
+                                    <td>{{ foo.filename }}</td>
+                                    <td>{{ foo.file.size|filesizeformat }}</td>
+                                    <td>
+                                        <a href="#" data-toggle="modal" data-target="#modalElectronicDelete{{ foo.id }}"
+                                           class="btn btn-danger pull-right"> <span
+                                                class="glyphicon glyphicon-trash"></span> </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <!-- Modal Digital -->
+    <div class="modal fade" id="modalDigital" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="/editdigital/" enctype="multipart/form-data"> {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Add Bukti Digital</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="filename">Filename </label>
+                            <input type="text" class="form-control" name="filename" id="filename" placeholder="Filename"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="filechooser">File (Any File Type)</label>
+                            <input type="file" class="form-control" name="evidence" id="filechooser" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Info File</label>
+                            <textarea type="text" class="form-control" name="info"
+                                      placeholder="Info File"></textarea>
+                            <input type="hidden" name="repository_id" value="{{ content.id_repository }}">
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Add Digital">
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Modal Electronics -->
+    <div class="modal fade" id="modalElectronic" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="POST" action="/editelectronic/" enctype="multipart/form-data"> {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Add Electronic Evidence</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="filename">Filename </label>
+                            <input type="text" class="form-control" name="filename" id="filename" placeholder="Filename"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="filechooser">File (Any File Type)</label>
+                            <input type="file" class="form-control" name="evidence" id="filechooser" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Info File</label>
+                            <textarea type="text" class="form-control" name="info"
+                                      placeholder="Info File"></textarea>
+                            <input type="hidden" name="repository_id" value="{{ content.id_repository }}">
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Add Digital">
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    {% for foo in digital %}
+        <!-- Modal Digital Delete {{ foo.id }} -->
+        <div class="modal fade" id="modalDigitalDelete{{ foo.id }}" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="/deletedigital/" method="POST"> {% csrf_token %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Remove <b>{{ foo.filename }}</b></h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" value="{{ foo.id }}" name="id">
+                            <h3 class="text-center"> Are You Sure to delete <b style="color: red">{{ foo.filename }}</b>
+                            </h3>
+                            <input type="hidden" name="repository_id" value="{{ foo.repository_id }}">
+                            <input type="hidden" name="filename" value="{{ foo.filename }}">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-danger" value="Delete">
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    {% endfor %}
+    {% for foo in electronic %}
+        <!-- Modal Digital Delete {{ foo.id }} -->
+        <div class="modal fade" id="modalElectronicDelete{{ foo.id }}" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="/deleteelectronic/" method="POST"> {% csrf_token %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Remove <b>{{ foo.filename }}</b></h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" value="{{ foo.id }}" name="id">
+                            <h3 class="text-center"> Are You Sure to delete <b style="color: red">{{ foo.filename }}</b>
+                            </h3>
+                            <input type="hidden" name="repository_id" value="{{ foo.repository_id }}">
+                            <input type="hidden" name="filename" value="{{ foo.filename }}">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="btn btn-danger" value="Delete">
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    {% endfor %}
+
+
+{% endblock %}

@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12" style="margin-bottom: 2%">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/repository/">Repository</a></li>
+                <li class="breadcrumb-item active">Detail</li>
+                {% if content == "nothing" %}
+
+                {% else %}
+                    <li class="pull-right"><a
+                            href="/repository/view/edit/{{ content.id_repository }}"
+                            class="pull-right button-add">Edit</a>
+                    </li>
+                    <li class="pull-right"><a
+                            href="#"  data-toggle="modal"
+                                              data-target="#deleteRepo" class="pull-right button-delete">Delete</a>
+                    </li>
+
+                    <!-- Delete Repository -->
+                    <div class="modal fade" id="deleteRepo" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form action="/deleterepository/" method="POST"> {% csrf_token %}
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <h4 class="modal-title">Remove <b>{{ content.repository_name }}</b></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" value="{{ content.id_repository }}" name="id_repository">
+                                        <h3 class="text-center"> Are You Sure to delete?
+                                        </h3>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">Owner <span
+                                                    class="pull-right">{{ content.user }}</span>
+                                            </li>
+                                            <li class="list-group-item">ID <span
+                                                    class="pull-right">{{ content.id_repository }}</span></li>
+                                            <li class="list-group-item">Name <span
+                                                    class="pull-right">{{ content.repository_name }}</span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel
+                                        </button>
+                                        <input type="submit" class="btn btn-danger" value="Delete">
+                                    </div>
+                                </form>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+                {% endif %}
+
+            </ol>
+        </div>
+
+
+
+        {% if content == "nothing" %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="col-lg-12 col-md-12 col-sm-12" style="margin-bottom: 2%">
+                        <div class="alert alert-danger alert-dismissable">
+
+                            <h3 class="text-center">{{ message }}</h3>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            <div class="col-lg-4" style="margin-bottom: 2%">
+                <div class="panel-heading" style="background-color: darkgrey">
+                    <div class="panel-title">
+                        <h4 class="text-center">Info Repository</h4>
+                    </div>
+                </div>
+                <div class="panel-body" style="background-color: lightgrey;">
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-hover">
+                            <tbody>
+                            <tr>
+                                <td><b>ID Repository</b></td>
+                                <td> :</td>
+                                <td>{{ content.id_repository }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Repository Name</b></td>
+                                <td> :</td>
+                                <td>{{ content.repository_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Date</b></td>
+                                <td> :</td>
+                                <td>{{ content.date }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Created</b></td>
+                                <td> :</td>
+                                <td>{{ content.created }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Info</b></td>
+                                <td> :</td>
+                                <td>{{ content.info }}
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td>
+                                <td>
+                                <td class=""><a href="/repository/xml/{{ content.id_repository }}"
+                                                class="btn btn-warning">View
+                                    as XML</a></td>
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 4%">
+                <div class="panel-heading" style="background-color: darkgrey">
+                    <div class="panel-title">
+                        <h4 class="text-center"><b>Digitals Evidence
+                        </b></h4>
+                    </div>
+                </div>
+                <div class="panel-body" style="background-color: beige">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Size</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for foo in digital %}
+                                <tr>
+                                    <td>{{ foo.filename }}</td>
+                                    <td>{{ foo.file.size|filesizeformat }}</td>
+                                    <td>
+                                        <a href="#" data-toggle="modal" data-target="#modalDigitalDelete{{ foo.id }}"
+                                           class="btn btn-primary pull-right"> Info </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12" style="margin-bottom: 2%">
+                <div class="panel-heading" style="background-color: darkgrey">
+                    <div class="panel-title">
+                        <h4 class="text-center"><b>Electronics Evidence
+                        </b></h4>
+                    </div>
+                </div>
+                <div class="panel-body" style="background-color: beige">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Size</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% for foo in electronic %}
+                                <tr>
+                                    <td>{{ foo.filename }}</td>
+                                    <td>{{ foo.file.size|filesizeformat }}</td>
+                                    <td>
+                                        <a href="#" data-toggle="modal" data-target="#modalElectronicDelete{{ foo.id }}"
+                                           class="btn btn-primary pull-right"> Info </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        {% endif %}
+    </div>
+
+
+{% endblock %}
